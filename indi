@@ -1,0 +1,18 @@
+//@version=2
+study(title='INTELLECT_city - Index Dollar', shorttitle='INTELLECT_city - Index Dollar')
+INVERT = input(false)
+range = cum(close-close[1])
+f_composite(_tf, _src)=>
+    _eurusd = security('EURUSD', _tf, -_src)
+    _gbpusd = security('GBPUSD', _tf, -_src)
+    _audusd = security('AUDUSD', _tf, -_src)
+    _usdjpy = security('USDJPY', _tf, _src)
+    _usdcad = security('USDCAD', _tf, _src)
+    _usdchf = security('USDCHF', _tf, _src)
+    _return = (_eurusd + _gbpusd + _audusd + _usdjpy + _usdcad + _usdchf)/6
+
+v_close = INVERT ? -f_composite(period, cum(close/close[1])) : f_composite(period, cum((close-close[1])/close))
+v_high = INVERT ? -f_composite(period, cum(high/high[1])) : f_composite(period, cum((high-high[1])/high))
+v_low = INVERT ? -f_composite(period, cum(low/low[1])) : f_composite(period, cum((low-low[1])/low))
+
+plotcandle(v_close[1], v_high, v_low, v_close, title='DCI', color=change(v_close)>=0?lime:red)
